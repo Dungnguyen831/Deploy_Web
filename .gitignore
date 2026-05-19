@@ -1,0 +1,12 @@
+.env
+config/
+*.log
+node_modules/
+.DS_Store
+.vscode/
+
+#.env        bỏ qua file môi trường có thể chứa mật khẩu
+#config/     bỏ qua thư mục cấu hình riêng
+#*.log       bỏ qua file log
+#node_modules/ bỏ qua thư viện tự sinh nếu dùng Node.js
+#.vscode/    bỏ qua cấu hình riêng của VS Code
