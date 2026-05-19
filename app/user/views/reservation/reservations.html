@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt chỗ của tôi - LibrarySaaS</title>
+  <link rel="stylesheet" href="../../../../assets/css/user/style.css">
+  <link rel="stylesheet" href="../../../../assets/css/user/reservations.css">
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <div id="navbar-container"></div>
+
+  <!-- Loading Indicator -->
+  <div id="page-loading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Page Header -->
+    <div class="reservations-header">
+      <div class="header-content">
+        <div class="header-info">
+          <h1 class="reservations-title">Đặt chỗ của tôi</h1>
+          <p class="reservations-subtitle">Theo dõi trạng thái sách yêu cầu của bạn và quản lý việc lấy sách.
+          </p>
+        </div>
+        <button class="btn btn-primary btn-lg" id="new-reservation-btn">+ Đặt chỗ mới</button>
+      </div>
+    </div>
+
+    <!-- Info Box: Approval Threshold Notice -->
+    <div class="info-box approval-threshold-notice">
+      <p style="margin: 0; line-height: 1.6;">
+        ℹ️ <strong>Quy định đặt và nhận sách:</strong><br>
+        • <strong>Thời gian chờ duyệt:</strong> Hệ thống tự động hủy đơn nếu quá <strong>3 ngày</strong> không được
+        admin duyệt.<br>
+        • <strong>Ngày hẹn lấy sách:</strong> Được tính tự động (nhận ngay hôm nay nếu duyệt trước 15:00, nhận vào ngày
+        mai nếu duyệt sau 15:00).<br>
+        • <strong>Hạn chót lấy sách:</strong> Đơn đã duyệt sẽ bị hủy tự động nếu bạn không đến thư viện lấy sách sau
+        <strong>1 ngày</strong> kể từ ngày hẹn.
+      </p>
+    </div>
+
+    <!-- Stats Cards Section -->
+
+
+    <!-- Current Reservations Table -->
+    <div class="reservations-table-section">
+      <div class="table-header">
+        <h2 class="section-title">Đặt chỗ hiện tại</h2>
+        <div class="table-controls">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="reservations-table">
+          <thead>
+            <tr>
+              <th class="col-cover">SÁCH</th>
+              <th class="col-title">TIÊU ĐỀ VÀ TÁC GIẢ</th>
+              <th class="col-date">NGÀY NHẬN SÁCH</th>
+              <th class="col-status">TRẠNG THÁI</th>
+              <th class="col-actions">THAO TÁC</th>
+            </tr>
+          </thead>
+          <tbody id="reservation-table-body">
+            <!-- Reservation rows will be injected here by ReservationView.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+
+
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="8" height="8" fill="#6366F1" />
+            <rect x="14" y="2" width="8" height="8" fill="#6366F1" />
+            <rect x="14" y="14" width="8" height="8" fill="#6366F1" />
+          </svg>
+          <span>LibrarySaaS</span>
+        </div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Terms</a>
+          <a href="#" class="footer-link">Privacy</a>
+          <a href="#" class="footer-link">Help Center</a>
+          <a href="#" class="footer-link">Contact</a>
+        </div>
+        <p class="footer-copyright">
+          © 2024 LibrarySaaS Inc. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Shared ImageService for image handling -->
+    <script src="../../../../assets/js/ImageService.js"></script>
+
+    <script src="../../../../app/admin/models/BookModel.js"></script>
+    <script src="../../models/ReservationModel.js"></script>
+    <script src="../../models/AllBooksModel.js"></script>
+    <script src="../../components/BorrowForm.js"></script>
+    <script src="../../components/ReservationForm.js"></script>
+    <script src="./ReservationView.js"></script>
+    <script src="../../controllers/ReservationController.js"></script>
+    <script src="../../../../assets/js/auth.js"></script>
+    <script>
+      // Load navbar component
+      fetch("../../components/navbar.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("navbar-container").innerHTML = html;
+        });
+
+      // Initialize the reservations page when DOM is ready
+      document.addEventListener("DOMContentLoaded", function () {
+        const reservationController = new ReservationController();
+        reservationController.init();
+      });
+    </script>
+</body>
+
+</html>

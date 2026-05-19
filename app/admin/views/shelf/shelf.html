@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Kệ sách - LMS Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../../../../assets/css/admin/admin-style.css">
+    <link rel="stylesheet" href="../../../../assets/css/admin/shelf.css">
+</head>
+<body class="bg-light">
+
+    <div class="d-flex" id="wrapper">
+        <div id="sidebar-container"></div>
+
+        <div id="page-content-wrapper" class="flex-grow-1">
+            <div id="header-container"></div>
+
+            <div class="container-fluid px-4 py-4" id="main-content">
+                
+                <div class="d-flex justify-content-between align-items-end mb-4">
+                    <div>
+                        <h3 class="fw-bold mb-1">Quản lý kệ sách</h3>
+                        <p class="text-muted mb-0">Tối ưu không gian lưu trữ và vị trí sách trong thư viện</p>
+                    </div>
+                    <button id="btn-add-shelf" class="btn btn-primary shadow-sm fw-medium px-4">
+                        <i class="fas fa-plus me-2"></i>Thêm kệ sách
+                    </button>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    
+                    <div class="p-4 border-bottom">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
+                                    <input type="text" id="searchInput" class="form-control bg-light border-0" placeholder="Tìm tên kệ, vị trí...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4 py-3 text-uppercase">MÃ KỆ</th>
+                                    <th class="text-uppercase">TÊN KỆ</th>
+                                    <th class="text-uppercase">VỊ TRÍ</th>
+                                    <th class="text-uppercase">THỂ LOẠI</th>
+                                    <th class="text-end pe-4 text-uppercase">THAO TÁC</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shelf-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+
+                   <div class="p-3 d-flex justify-content-between align-items-center">
+                        <p id="total-shelves-count" class="text-muted mb-0">Hiển thị 0 kệ sách</p>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="shelfModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Thêm kệ sách mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="shelfForm">
+                        <input type="hidden" id="shelfId">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Tên kệ sách</label>
+                            <input type="text" id="shelfName" class="form-control" placeholder="Ví dụ: Kệ A1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Tầng</label>
+                            <input type="number" id="shelfFloor" class="form-control" placeholder="1, 2, 3..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Thể loại chuyên trách</label>
+                            <select id="shelfCategory" class="form-select" required>
+                                <option value="">-- Chọn thể loại --</option>
+                                <!-- Dữ liệu từ CategoryModel sẽ đổ vào đây -->
+                            </select>
+                        </div>
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn btn-light px-4 me-2" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary px-4">Lưu dữ liệu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../../assets/js/ComponentLoader.js"></script>
+    <script src="/app/admin/models/CategoryModel.js"></script>
+    <script src="/app/admin/models/ShelfModel.js"></script>
+    <script src="/app/admin/views/shelf/ShelfView.js"></script>
+    <script src="/app/admin/controllers/ShelfController.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await Promise.all([
+                ComponentLoader.load('sidebar-container', '../../components/sidebar.html'),
+                ComponentLoader.load('header-container', '../../components/header.html')
+            ]);
+
+            // Active menu
+            const sidebarItems = document.querySelectorAll('#sidebar-wrapper .list-group-item');
+            if (sidebarItems.length > 0) {
+                sidebarItems.forEach(el => el.classList.remove('active'));
+                const shelfMenu = document.querySelector('#sidebar-wrapper a[href*="shelf.html"]');
+                if (shelfMenu) shelfMenu.classList.add('active');
+            }
+
+            // Init MVC
+            if (typeof ShelfController !== 'undefined') {
+                const shelfApp = new ShelfController(new ShelfModel(), new ShelfView(), new CategoryModel());
+                shelfApp.init();
+            }
+        });
+    </script>
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold fs-5">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="mb-0 text-secondary">Bạn có chắc chắn muốn xóa kệ sách này không?</p>
+            </div>
+            <div class="modal-footer border-top-0 pt-0 justify-content-end pb-4">
+                <button type="button" class="btn btn-secondary px-4 py-2 me-2 shadow-sm" 
+                        style="background-color: #6c757d; border: none; border-radius: 8px;" 
+                        data-bs-dismiss="modal">Hủy</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger px-4 py-2 shadow-sm" 
+                        style="background-color: #dc3545; border: none; border-radius: 8px;">Xác nhận xóa</button>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+</html>

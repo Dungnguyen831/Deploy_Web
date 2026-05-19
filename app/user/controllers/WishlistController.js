@@ -1,0 +1,273 @@
+/**
+ * Wishlist Controller Class
+ * Handles business logic for the Wishlist page including:
+ * - State management (current page, active filter, sort criteria)
+ * - Fetching wishlist data from API
+ * - Filtering and sorting operations
+ * - Pagination logic
+ */
+//import { checkAuth } from "../../../assets/js/auth.js";
+class WishlistController {
+  constructor(wishlistModel, wishlistView) {
+    this.model = wishlistModel;
+    this.view = wishlistView;
+
+    // State management
+    this.state = {
+      allBooks: [],
+      filteredBooks: [],
+      currentPage: 1,
+      itemsPerPage: 6,
+      activeFilter: "all",
+      sortBy: "date-added",
+    };
+
+    this.init();
+  }
+
+
+  init() {
+    this.loadWishlistData();
+    window.addEventListener('wishlistChanged', (event) => {
+      console.log('Wishlist thay đổi từ trang khác:', event.detail);
+      this.loadWishlistData();
+    });
+  }
+
+  async loadWishlistData() {
+    if (!checkAuth()) return;
+    try {
+      this.view.showLoading();
+      const data = await this.model.getWishlist();
+
+      if (data && data.books) {
+        this.state.allBooks = data.books;
+        this.state.filteredBooks = [...this.state.allBooks];
+        this.state.currentPage = 1;
+
+        this.view.updateItemsCounter(this.state.filteredBooks.length);
+        this.applyFilterAndSort();
+        await this.renderPage(); // await async render
+      } else {
+        this.view.showError("Không thể tải dữ liệu wishlist");
+      }
+    } catch (error) {
+      console.error("Lỗi tải wishlist:", error);
+      this.view.showError(
+        "Lỗi tải wishlist của bạn. Vui lòng thử lại sau.",
+      );
+    }
+  }
+
+  /**
+   * Handle filter change event
+   * @param {string} filterValue - The filter to apply
+   */
+  handleFilterChange(filterValue) {
+    this.state.activeFilter = filterValue;
+    this.state.currentPage = 1;
+    this.applyFilterAndSort();
+    this.renderPage(); // renderPage is now async but we don't need to wait
+  }
+
+  /**
+   * Handle sort change event
+   * @param {string} sortValue - The sort criteria to apply
+   */
+  handleSortChange(sortValue) {
+    this.state.sortBy = sortValue;
+    this.state.currentPage = 1;
+    this.applyFilterAndSort();
+    this.renderPage(); // renderPage is now async but we don't need to wait
+  }
+
+  /**
+   * Handle page change from pagination
+   * @param {number} pageNumber - Page number to navigate to
+   */
+  handlePageChange(pageNumber) {
+    this.state.currentPage = pageNumber;
+    this.renderPage(); // renderPage is now async but we don't need to wait
+    this.scrollToTop();
+  }
+
+  /**
+   * Handle previous pagination button
+   */
+  handlePaginationPrev() {
+    if (this.state.currentPage > 1) {
+      this.handlePageChange(this.state.currentPage - 1);
+    }
+  }
+
+  /**
+   * Handle next pagination button
+   */
+  handlePaginationNext() {
+    const totalPages = this.getTotalPages();
+    if (this.state.currentPage < totalPages) {
+      this.handlePageChange(this.state.currentPage + 1);
+    }
+  }
+
+  /**
+   * Handle removing book from wishlist
+   * @param {string|number} bookId - ID of the book to remove
+   * @param {Element} btn - Heart button element
+   * @param {boolean} skipApiCall - Skip API call if already done by BookCard
+   */
+  async handleRemoveFromWishlist(bookId, btn, skipApiCall = false) {
+    try {
+      // ✅ Skip API call if BookCard component already called it
+      if (!skipApiCall) {
+        await this.model.removeFromWishlist(bookId);
+      }
+
+      // Remove book from local state
+      this.state.allBooks = this.state.allBooks.filter(
+        (book) => book.id !== bookId,
+      );
+      this.state.filteredBooks = this.state.filteredBooks.filter(
+        (book) => book.id !== bookId,
+      );
+
+      // Reset to page 1 if current page is now empty
+      const totalPages = this.getTotalPages();
+      if (this.state.currentPage > totalPages) {
+        this.state.currentPage = Math.max(1, totalPages);
+      }
+
+      this.view.updateItemsCounter(this.state.filteredBooks.length);
+      await this.renderPage(); // renderPage is now async
+    } catch (error) {
+      console.error("Error removing from wishlist:", error);
+      alert("Failed to remove book from wishlist");
+    }
+  }
+
+  /**
+   * Apply current filter and sort to the books
+   */
+  applyFilterAndSort() {
+    // Apply filter
+    this.state.filteredBooks = this._applyFilter(
+      this.state.allBooks,
+      this.state.activeFilter,
+    );
+
+    // Apply sort
+    this.state.filteredBooks = this._applySorting(
+      this.state.filteredBooks,
+      this.state.sortBy,
+    );
+  }
+
+  /**
+   * Apply filter to books array
+   * @private
+   * @param {Array} books - Books to filter
+   * @param {string} filter - Filter type
+   * @returns {Array} Filtered books
+   */
+  _applyFilter(books, filter) {
+    if (filter === "all") {
+      return books;
+    }
+
+    return books.filter((book) => {
+      switch (filter) {
+        case "available":
+          return book.availability === "available";
+        case "ebooks":
+          return book.format === "ebook";
+        case "audiobooks":
+          return book.format === "audiobook";
+        default:
+          return true;
+      }
+    });
+  }
+
+  /**
+   * Apply sorting to books array
+   * @private
+   * @param {Array} books - Books to sort
+   * @param {string} sortBy - Sort criteria
+   * @returns {Array} Sorted books
+   */
+  _applySorting(books, sortBy) {
+    const sorted = [...books];
+
+    switch (sortBy) {
+      case "date-added":
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.dateAdded || 0);
+          const dateB = new Date(b.dateAdded || 0);
+          return dateB - dateA; // Most recent first
+        });
+        break;
+
+      case "title":
+        sorted.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+        break;
+
+      case "author":
+        sorted.sort((a, b) => (a.author || "").localeCompare(b.author || ""));
+        break;
+
+      case "rating":
+        sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+
+      default:
+        // Default to date added
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.dateAdded || 0);
+          const dateB = new Date(b.dateAdded || 0);
+          return dateB - dateA;
+        });
+    }
+
+    return sorted;
+  }
+
+  /**
+   * Get total number of pages
+   * @returns {number} Total pages
+   */
+  getTotalPages() {
+    return Math.ceil(this.state.filteredBooks.length / this.state.itemsPerPage);
+  }
+
+  /**
+   * Get books for current page
+   * @returns {Array} Books to display on current page
+   */
+  getBooksForCurrentPage() {
+    const startIndex = (this.state.currentPage - 1) * this.state.itemsPerPage;
+    const endIndex = startIndex + this.state.itemsPerPage;
+    return this.state.filteredBooks.slice(startIndex, endIndex);
+  }
+
+  /**
+   * Render the current page
+   */
+  async renderPage() {
+    const booksToDisplay = this.getBooksForCurrentPage();
+    const totalPages = this.getTotalPages();
+
+    // ✅ Pass wishlistModel to view for remove functionality (await async render)
+    await this.view.renderWishlistBooks(booksToDisplay, this.model);
+    this.view.renderPagination(totalPages, this.state.currentPage);
+  }
+
+  /**
+   * Scroll to top of the page
+   */
+  scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+}

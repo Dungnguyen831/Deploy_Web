@@ -1,0 +1,29 @@
+<!-- Reservation Form Template -->
+<!-- Used for both CREATE (new reservation) and UPDATE (edit reservation) modes -->
+<template id="reservation-form-template">
+    <div class="reservation-modal-overlay">
+        <div class="reservation-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">{modalTitle}</h2>
+                <button class="modal-close-btn" type="button" title="Đóng">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <form id="reservation-form" class="reservation-form">
+                <!-- Book Selection (only for CREATE mode) -->
+                {bookSelector}
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        {submitButtonText}
+                    </button>
+                    <button type="button" class="btn btn-secondary close-modal-btn">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</template>

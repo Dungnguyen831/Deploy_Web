@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hồ sơ cá nhân - LMS</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../../../assets/css/user/style.css" />
+    <link rel="stylesheet" href="../../../../assets/css/user/profile.css" />
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <div class="profile-page-wrapper">
+      <div class="profile-card">
+        <div class="profile-banner"></div>
+
+        <div class="profile-body">
+          <div class="avatar-section">
+            <div class="avatar-circle">
+              <i class="fas fa-user"></i>
+            </div>
+            <h4 class="avatar-name" id="displayName">---</h4>
+          </div>
+
+          <form id="profileForm">
+            <div class="profile-form-grid">
+              <div class="form-group">
+                <label class="form-label">Họ và Tên</label>
+                <input type="text" id="fullName" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" disabled />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Số điện thoại</label>
+                <input type="text" id="phone" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mã sinh viên</label>
+                <input type="text" id="msv" class="form-control" disabled />
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <a
+                href="changePassword.html"
+                id="btnEdit"
+                class="btn-custom btn-outline"
+              >
+                <i class="fas fa-edit"></i> Đổi mật khẩu
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="/app/admin/models/reader/ReaderModel.js"></script>
+    <script src="/app/user/views/profile/profileView.js"></script>
+    <script src="/app/user/controllers/profile/ProfileController.js"></script>
+    <script src="../../../../assets/js/auth.js"></script>
+    <script>
+      fetch("../../components/navbar.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("navbar-container").innerHTML = html;
+        });
+      document.addEventListener("DOMContentLoaded", () => {
+        // Khởi tạo tính năng cho riêng trang Profile
+        const app = new ProfileController(new ReaderModel(), new ProfileView());
+        app.fillForm();
+      });
+    </script>
+  </body>
+</html>
