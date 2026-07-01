@@ -1,6 +1,6 @@
 class CategoryModel {
     constructor() {
-        this.apiUrl = 'http://localhost:8080/api/v1/categories';
+        this.apiUrl = '/api/v1/categories';
     }
 
     // Hàm phụ để lấy token từ localStorage 

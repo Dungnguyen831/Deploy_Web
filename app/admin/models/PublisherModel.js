@@ -8,8 +8,8 @@ class PublisherModel {
     }
     async fetchPublishers() {
         try {
-            // Thay URL này bằng đường dẫn API thật của bạn (ví dụ: http://localhost:8080/api/v1/publishers)
-            const response = await fetch('http://localhost:8080/api/v1/publishers', {
+            // Thay URL này bằng đường dẫn API thật của bạn (ví dụ: /api/v1/publishers)
+            const response = await fetch('/api/v1/publishers', {
                 method: 'GET',
                 headers: this.getHeaders()
             });
@@ -35,7 +35,7 @@ class PublisherModel {
 
     async createPublisher(publisherData) {
         try {
-            const response = await fetch('http://localhost:8080/api/v1/publishers', {
+            const response = await fetch('/api/v1/publishers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(publisherData)
@@ -50,7 +50,7 @@ class PublisherModel {
     }
     // Lấy 1 NXB theo ID để sửa
     async getPublisherById(id) {
-        const response = await fetch(`http://localhost:8080/api/v1/publishers/${id}`, {
+        const response = await fetch(`/api/v1/publishers/${id}`, {
             method: 'GET',
             headers: this.getHeaders()
         });
@@ -61,7 +61,7 @@ class PublisherModel {
     // Cập nhật NXB
     async updatePublisher(id, data) {
         // --- PHẦN VIẾT THÊM: Token cho phương thức PUT ---
-        const response = await fetch(`http://localhost:8080/api/v1/publishers/${id}`, {
+        const response = await fetch(`/api/v1/publishers/${id}`, {
             method: 'PUT',
             headers: this.getHeaders(),
             body: JSON.stringify(data)
@@ -74,7 +74,7 @@ class PublisherModel {
     // Xóa NXB
     async deletePublisher(id) {
         // --- PHẦN VIẾT THÊM: Token cho phương thức DELETE ---
-        const response = await fetch(`http://localhost:8080/api/v1/publishers/${id}`, {
+        const response = await fetch(`/api/v1/publishers/${id}`, {
             method: 'DELETE',
             headers: this.getHeaders()
         });

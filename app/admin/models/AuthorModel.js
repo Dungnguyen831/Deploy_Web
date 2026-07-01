@@ -11,7 +11,7 @@ class AuthorModel {
     async fetchAuthors() {
         try {
             // Thêm headers vào hàm GET
-            const response = await fetch('http://localhost:8080/api/v1/authors', {
+            const response = await fetch('/api/v1/authors', {
                 method: 'GET',
                 headers: this.getHeaders() 
             }); 
@@ -35,7 +35,7 @@ class AuthorModel {
     }
 
     async createAuthor(authorData) {
-        const response = await fetch('http://localhost:8080/api/v1/authors', {
+        const response = await fetch('/api/v1/authors', {
             method: 'POST',
             headers: this.getHeaders(), // Dùng hàm getHeaders để lấy cả Content-Type và Token
             body: JSON.stringify(authorData)
@@ -45,7 +45,7 @@ class AuthorModel {
     }
 
     async updateAuthor(id, authorData) {
-        const response = await fetch(`http://localhost:8080/api/v1/authors/${id}`, {
+        const response = await fetch(`/api/v1/authors/${id}`, {
             method: 'PUT',
             headers: this.getHeaders(),
             body: JSON.stringify(authorData)
@@ -59,7 +59,7 @@ class AuthorModel {
 
    
     async deleteAuthor(id) {
-    const response = await fetch(`http://localhost:8080/api/v1/authors/${id}`, {
+    const response = await fetch(`/api/v1/authors/${id}`, {
         method: 'DELETE',
         headers: this.getHeaders()
     });

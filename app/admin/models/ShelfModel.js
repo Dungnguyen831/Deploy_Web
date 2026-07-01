@@ -10,7 +10,7 @@ class ShelfModel {
 
     async fetchShelves(name = "", floor = "") {
     try {
-        const url = new URL('http://localhost:8080/api/v1/shelves');
+        const url = new URL('/api/v1/shelves');
         
         // Chỉ thêm params nếu có giá trị thực
         if (name) url.searchParams.append('name', name); 
@@ -40,7 +40,7 @@ class ShelfModel {
 }
 
     async createShelf(shelfData) {
-        const response = await fetch('http://localhost:8080/api/v1/shelves', {
+        const response = await fetch('/api/v1/shelves', {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(shelfData)
@@ -51,7 +51,7 @@ class ShelfModel {
 
     // Lấy 1 kệ để sửa
     async getShelfById(id) {
-        const response = await fetch(`http://localhost:8080/api/v1/shelves/${id}`, {
+        const response = await fetch(`/api/v1/shelves/${id}`, {
             headers: this.getHeaders()
         });
         return await response.json();
@@ -59,7 +59,7 @@ class ShelfModel {
 
     // Cập nhật kệ
     async updateShelf(id, shelfData) {
-        const response = await fetch(`http://localhost:8080/api/v1/shelves/${id}`, {
+        const response = await fetch(`/api/v1/shelves/${id}`, {
             method: 'PUT',
             headers: this.getHeaders(),
             body: JSON.stringify(shelfData)
@@ -69,7 +69,7 @@ class ShelfModel {
 
     // Xóa kệ
     async deleteShelf(id) {
-        const response = await fetch(`http://localhost:8080/api/v1/shelves/${id}`, {
+        const response = await fetch(`/api/v1/shelves/${id}`, {
             method: 'DELETE',
             headers: this.getHeaders()
         });

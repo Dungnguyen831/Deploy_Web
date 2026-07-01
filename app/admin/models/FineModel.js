@@ -1,6 +1,6 @@
 class FineModel {
     constructor() {
-        this.baseUrl = 'http://localhost:8080/api/v1/fines';
+        this.baseUrl = '/api/v1/fines';
     }
 
     // 1. Lấy danh sách phạt

@@ -1,6 +1,6 @@
 class UserLoanModel {
     constructor() {
-        this.apiUrl = 'http://localhost:8080/api/v1/loans/user';
+        this.apiUrl = '/api/v1/loans/user';
     }
 
     // Hàm gọi API lấy danh sách phiếu mượn

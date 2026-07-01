@@ -1,6 +1,6 @@
 class BookCopyModel {
     constructor() {
-        this.apiUrl = 'http://localhost:8080/api/v1/book-copies';
+        this.apiUrl = '/api/v1/book-copies';
     }
 
     // Hàm bổ trợ để lấy Header có chứa Token

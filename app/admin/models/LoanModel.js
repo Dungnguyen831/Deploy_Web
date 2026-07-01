@@ -6,7 +6,7 @@ class LoanModel {
   async fetchLoans() {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/api/v1/loans", {
+      const response = await fetch("/api/v1/loans", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +27,7 @@ class LoanModel {
   async createLoan(loanData) {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/api/v1/loans", {
+      const response = await fetch("/api/v1/loans", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -53,7 +53,7 @@ class LoanModel {
   async deleteLoan(loanId) {
     try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8080/api/v1/loans/${loanId}`, {
+        const response = await fetch(`/api/v1/loans/${loanId}`, {
             method: 'DELETE',
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -77,7 +77,7 @@ class LoanModel {
   async renewBook(detailId, newDateData) {
     try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8080/api/v1/loans/details/${detailId}/renew`, {
+        const response = await fetch(`/api/v1/loans/details/${detailId}/renew`, {
             method: 'PUT',
             headers: { 
                 "Content-Type": "application/json",
@@ -104,7 +104,7 @@ class LoanModel {
   async returnBook(detailId, conditionData) {
     try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8080/api/v1/loans/details/${detailId}/return`, {
+        const response = await fetch(`/api/v1/loans/details/${detailId}/return`, {
             method: 'PUT',
             headers: { 
                 "Content-Type": "application/json",
@@ -132,7 +132,7 @@ class LoanModel {
     try {
       const token = localStorage.getItem("token");
       // Sửa lại URL cho đúng với API của bạn
-      const res = await fetch("http://localhost:8080/api/v1/users", {
+      const res = await fetch("/api/v1/users", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) return [];
@@ -146,7 +146,7 @@ class LoanModel {
   async fetchAllBooks() {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8080/api/v1/books", {
+      const res = await fetch("/api/v1/books", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) return [];
